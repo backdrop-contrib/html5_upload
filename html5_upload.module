@@ -1,0 +1,121 @@
+<?php
+/**
+ * @file
+ *
+ * Batch-uploading of images/files in modern (HTML5 compliant) browsers
+ *
+ *  - Uses hooks to alter the widget field, adding new widget clones for every 
+ *    extra file submitted by the HTML5 multiple file upload, of course, 
+ *    respecting the limits set in the field config.
+ *  - It also alters $_FILES to have a Drupal File API compatible structure.
+ *  - The HTML5 "multiple" upload field attribute is automatically used in ALL 
+ *    browsers multi-value File/Image widgets.
+ * 
+ * Know issues:
+ *  - A Drupal (field?) bug prevents proper caching of modified forms during a
+ *    non-AJAX upload request, resetting upload count on the next request. To
+ *    overcome this limitation, either use AJAX upload or submit a valid form
+ *    on the first try.
+ */
+
+/**
+ * Implement hook_help().
+ */
+function html5_upload_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#html5_upload':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t("The HTML5 Upload module should be regarded as a streamlined solution for batch-uploading of images (and other files) for Drupal 7 in modern (HTML5 compliant) browser, nothing more.") . '</p>';
+      $output .= '<p>' . t("Most probably it won't get ported to neither to 6.x, nor 8.x as there are alternatives already.") . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implement hook_field_widget_form_alter().
+ */
+function html5_upload_field_widget_form_alter(&$element, &$form_state, $context) {
+  $field = $context['field'];
+  if (in_array($field['type'], array('file', 'image'))) {
+
+    // only affect fields with cardinality > 1
+    if ($field['cardinality'] != 1) {
+      $element['#process'][] = '_html5_upload_element_process';
+      $element['#max_delta'] = $field['cardinality'] == FIELD_CARDINALITY_UNLIMITED ? 999999 : $field['cardinality'];
+    }
+  }
+}
+
+/**
+ * Handle "multiple" file uploads.
+ */
+function _html5_upload_element_process(&$element, &$form_state, &$complete_form) {
+  $indexes = element_children($element);
+  $delta = count($indexes);
+
+  // the multiple uploader is needed only if there are multiple empty slots
+  if ($delta < $element['#max_delta']) {
+    $upload_prefix = implode('_', $element['#parents']) . '_';
+    $changed = false;
+
+    foreach ($indexes as $index) {
+      $el =& $element[$index];
+      $el['#process'][] = '_html5_upload_element_input_process';
+
+      // are there any files from a "multiple" upload field?
+      $upload_name = $upload_prefix . $index;
+      if (!empty($_FILES['files']['name'][$upload_name]) && is_array($_FILES['files']['name'][$upload_name])) {
+        $original_files = $_FILES['files'];
+        unset($_FILES['files']['name'][$upload_name],
+          $_FILES['files']['type'][$upload_name],
+          $_FILES['files']['tmp_name'][$upload_name],
+          $_FILES['files']['error'][$upload_name],
+          $_FILES['files']['size'][$upload_name]);
+
+        // add a new form element for each extra uploaded file
+        $first = true;
+        foreach ($original_files['name'][$upload_name] as $i => $name) {
+          if ($original_files['error'][$upload_name][$i]) {
+            continue;
+          }
+
+          if ($first) {
+            $new_name = $upload_name;
+            $first = false;
+          } else {
+            if ($delta >= $element['#max_delta']) {
+              continue;
+            }
+            $index = $delta;
+            $new_name = $upload_prefix . $delta;
+            $element[$delta] = $el;
+            $delta++;
+          }
+
+          $changed = true;
+          $_FILES['files']['name'][$new_name] = $name;
+          $_FILES['files']['type'][$new_name] = $original_files['type'][$upload_name][$i];
+          $_FILES['files']['tmp_name'][$new_name] = $original_files['tmp_name'][$upload_name][$i];
+          $_FILES['files']['error'][$new_name] = $original_files['error'][$upload_name][$i];
+          $_FILES['files']['size'][$new_name] = $original_files['size'][$upload_name][$i];
+        }
+
+        // add one final empty upload
+        if (!$first && $delta < $element['#max_delta']) {
+          $element[$delta] = $el;
+          $delta++;
+        }
+      }
+    }
+  }
+  return $element;
+}
+
+/**
+ * Add "multiple" attribute to file upload inputs.
+ */
+function _html5_upload_element_input_process($element, $form_state, $complete_form) {
+  $element['upload']['#attributes']['multiple'] = true;
+  $element['upload']['#name'] .= '[]';
+  return $element;
+}
