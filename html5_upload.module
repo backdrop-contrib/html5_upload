@@ -4,13 +4,13 @@
  *
  * Batch-uploading of images/files in modern (HTML5 compliant) browsers
  *
- *  - Uses hooks to alter the widget field, adding new widget clones for every 
- *    extra file submitted by the HTML5 multiple file upload, of course, 
+ *  - Uses hooks to alter the widget field, adding new widget clones for every
+ *    extra file submitted by the HTML5 multiple file upload, of course,
  *    respecting the limits set in the field config.
  *  - It also alters $_FILES to have a Drupal File API compatible structure.
- *  - The HTML5 "multiple" upload field attribute is automatically used in ALL 
+ *  - The HTML5 "multiple" upload field attribute is automatically used in ALL
  *    browsers multi-value File/Image widgets.
- * 
+ *
  * Know issues:
  *  - A Drupal (field?) bug prevents proper caching of modified forms during a
  *    non-AJAX upload request, resetting upload count on the next request. To
