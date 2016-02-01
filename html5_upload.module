@@ -11,25 +11,12 @@
  *  - The HTML5 "multiple" upload field attribute is automatically used in ALL
  *    browsers multi-value File/Image widgets.
  *
- * Know issues:
- *  - A Drupal (field?) bug prevents proper caching of modified forms during a
+ * KnowN issues:
+ *  - A Backdrop (field?) bug prevents proper caching of modified forms during a
  *    non-AJAX upload request, resetting upload count on the next request. To
  *    overcome this limitation, either use AJAX upload or submit a valid form
  *    on the first try.
  */
-
-/**
- * Implement hook_help().
- */
-function html5_upload_help($path, $arg) {
-  switch ($path) {
-    case 'admin/help#html5_upload':
-      $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t("The HTML5 Upload module should be regarded as a streamlined solution for batch-uploading of images (and other files) for Drupal 7 in modern (HTML5 compliant) browser, nothing more.") . '</p>';
-      $output .= '<p>' . t("Most probably it won't get ported to neither to 6.x, nor 8.x as there are alternatives already.") . '</p>';
-      return $output;
-  }
-}
 
 /**
  * Implement hook_field_widget_form_alter().

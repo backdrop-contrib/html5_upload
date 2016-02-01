@@ -1,4 +1,5 @@
 name = HTML5 upload
 description = A streamlined solution for batch-uploading of images (and other files) in modern (HTML5 compliant) browsers.
 dependencies[] = file
-core = 7.x
+backdrop = 1.x
+version = 1.x-1.x
