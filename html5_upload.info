@@ -3,3 +3,4 @@ description = A streamlined solution for batch-uploading of images (and other fi
 dependencies[] = file
 backdrop = 1.x
 version = 1.x-1.x
+type = module
