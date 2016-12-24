@@ -1,5 +1,5 @@
 HTML5 Upload
----------------------
+=============
 
 Batch-uploading (drag-and-drop multiple) of images/files in modern (HTML5 compliant) browsers
 
