@@ -1,5 +1,5 @@
 HTML5 Upload
----------------------
+=============
 
 Batch-uploading (drag-and-drop multiple) of images/files in modern (HTML5 compliant) browsers. Install the module and all your file/image fields become HTML5 multiples (single as well) in newer/compliant browsers.
 
