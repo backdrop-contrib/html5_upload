@@ -60,24 +60,17 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
           $_FILES['files']['size'][$upload_name]);
 
         // add a new form element for each extra uploaded file
-        $first = true;
         foreach ($original_files['name'][$upload_name] as $i => $name) {
           if ($original_files['error'][$upload_name][$i]) {
             continue;
           }
 
-          if ($first) {
-            $new_name = $upload_name;
-            $first = false;
-          } else {
-            if ($delta >= $element['#max_delta']) {
+            if ($delta > $element['#max_delta']) {
               continue;
             }
-            $index = $delta;
+            $delta++;
             $new_name = $upload_prefix . $delta;
             $element[$delta] = $el;
-            $delta++;
-          }
 
           $changed = true;
           $_FILES['files']['name'][$new_name] = $name;
@@ -88,7 +81,7 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
         }
 
         // add one final empty upload
-        if (!$first && $delta < $element['#max_delta']) {
+        if ($delta < $element['#max_delta']) {
           $element[$delta] = $el;
           $delta++;
         }
