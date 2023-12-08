@@ -7,11 +7,11 @@
  *  - Uses hooks to alter the widget field, adding new widget clones for every
  *    extra file submitted by the HTML5 multiple file upload, of course,
  *    respecting the limits set in the field config.
- *  - It also alters $_FILES to have a Drupal File API compatible structure.
+ *  - It also alters $_FILES to have a Backdrop File API compatible structure.
  *  - The HTML5 "multiple" upload field attribute is automatically used in ALL
  *    browsers multi-value File/Image widgets.
  *
- * KnowN issues:
+ * Known issues:
  *  - A Backdrop (field?) bug prevents proper caching of modified forms during a
  *    non-AJAX upload request, resetting upload count on the next request. To
  *    overcome this limitation, either use AJAX upload or submit a valid form
@@ -25,7 +25,7 @@ function html5_upload_field_widget_form_alter(&$element, &$form_state, $context)
   $field = $context['field'];
   if (in_array($field['type'], array('file', 'image'))) {
 
-    // only affect fields with cardinality > 1
+    // Only affect fields with cardinality > 1.
     if ($field['cardinality'] != 1) {
       $element['#process'][] = '_html5_upload_element_process';
       $element['#max_delta'] = $field['cardinality'] == FIELD_CARDINALITY_UNLIMITED ? 999999 : $field['cardinality'];
@@ -40,7 +40,7 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
   $indexes = element_children($element);
   $delta = count($indexes);
 
-  // the multiple uploader is needed only if there are multiple empty slots
+  // The multiple uploader is needed only if there are multiple empty slots.
   if ($delta < $element['#max_delta']) {
     $upload_prefix = implode('_', $element['#parents']) . '_';
     $changed = false;
@@ -49,7 +49,7 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
       $el =& $element[$index];
       $el['#process'][] = '_html5_upload_element_input_process';
 
-      // are there any files from a "multiple" upload field?
+      // Are there any files from a "multiple" upload field?
       $upload_name = $upload_prefix . $index;
       if (!empty($_FILES['files']['name'][$upload_name]) && is_array($_FILES['files']['name'][$upload_name])) {
         $original_files = $_FILES['files'];
@@ -59,7 +59,7 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
           $_FILES['files']['error'][$upload_name],
           $_FILES['files']['size'][$upload_name]);
 
-        // add a new form element for each extra uploaded file
+        // Add a new form element for each extra uploaded file.
         foreach ($original_files['name'][$upload_name] as $i => $name) {
           if ($original_files['error'][$upload_name][$i]) {
             continue;
@@ -78,12 +78,6 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
           $_FILES['files']['tmp_name'][$new_name] = $original_files['tmp_name'][$upload_name][$i];
           $_FILES['files']['error'][$new_name] = $original_files['error'][$upload_name][$i];
           $_FILES['files']['size'][$new_name] = $original_files['size'][$upload_name][$i];
-        }
-
-        // add one final empty upload
-        if ($delta < $element['#max_delta']) {
-          $element[$delta] = $el;
-          $delta++;
         }
       }
     }
