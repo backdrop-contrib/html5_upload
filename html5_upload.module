@@ -58,7 +58,6 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
           $_FILES['files']['tmp_name'][$upload_name],
           $_FILES['files']['error'][$upload_name],
           $_FILES['files']['size'][$upload_name],
-          $_FILES['files']['full_path'][$upload_name],
           $_FILES['files']['orig_name'][$upload_name]);
 
         // Add a new form element for each extra uploaded file.
@@ -80,7 +79,6 @@ function _html5_upload_element_process(&$element, &$form_state, &$complete_form)
           $_FILES['files']['tmp_name'][$new_name] = $original_files['tmp_name'][$upload_name][$i];
           $_FILES['files']['error'][$new_name] = $original_files['error'][$upload_name][$i];
           $_FILES['files']['size'][$new_name] = $original_files['size'][$upload_name][$i];
-          $_FILES['files']['full_path'][$new_name] = $original_files['full_path'][$upload_name][$i];
           $_FILES['files']['orig_name'][$new_name] = $original_files['orig_name'][$upload_name][$i];
         }
       }
