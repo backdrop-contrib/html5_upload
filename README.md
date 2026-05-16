@@ -1,5 +1,7 @@
-HTML5 Upload
+HTML5 Upload  (for Backdrop < 1.34)
 =============
+
+⚠️ **Status:** The functionality that this module provides has been included in Backdrop core as of version 1.34.0, so this module is no longer required.
 
 Batch-uploading (drag-and-drop multiple) of images/files in modern (HTML5 compliant) browsers. Install the module and all your file/image fields become HTML5 multiples (single as well) in newer/compliant browsers.
 
@@ -21,7 +23,7 @@ Bugs and Feature requests should be reported in the [Issue Queue](https://github
 Current Maintainers
 -------------------
 
-- [Laryn Kragt Bakker](https://github.com/laryn) - [CEDC.org](https://cedc.org).
+- [Laryn Kragt Bakker](https://github.com/laryn).
 
 Credits
 -------
